@@ -16,6 +16,7 @@ import AdbIcon from '@mui/icons-material/Adb';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { PhotoCamera, Upload, UploadFile } from '@mui/icons-material';
 import { Input, Stack } from '@mui/material';
+import { degrees, PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 interface Props {
   /**
    * Injected by the documentation to work in an iframe.
@@ -27,6 +28,12 @@ interface Props {
 const drawerWidth = 240;
 const navItems = ['Home', 'About', 'Contact'];
 
+function Download(arrayBuffer: BlobPart, type: string) {
+  var blob = new Blob([arrayBuffer], { type: type });
+  var url = URL.createObjectURL(blob);
+  window.open(url);
+}
+
 export default function DrawerAppBar(props: Props) {
   const { window } = props;
   const [mobileOpen, setMobileOpen] = React.useState(false);
@@ -34,6 +41,41 @@ export default function DrawerAppBar(props: Props) {
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
+
+  async function modifyPdf() {
+    // Fetch an existing PDF document
+    const url = 'https://pdf-lib.js.org/assets/with_update_sections.pdf'
+    const existingPdfBytes = await fetch(url).then(res => res.arrayBuffer())
+
+    // Load a PDFDocument from the existing PDF bytes
+    const pdfDoc = await PDFDocument.load(existingPdfBytes)
+
+    // Embed the Helvetica font
+    const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica)
+
+    // Get the first page of the document
+    const pages = pdfDoc.getPages()
+    const firstPage = pages[0]
+
+    // Get the width and height of the first page
+    const { width, height } = firstPage.getSize()
+
+    // Draw a string of text diagonally across the first page
+    firstPage.drawText('This text was added with JavaScript!', {
+      x: 5,
+      y: height / 2 ,
+      size: 12,
+      font: helveticaFont,
+      color: rgb(0.95, 0.1, 0.1),
+      rotate: degrees(0),
+    })
+
+    // Serialize the PDFDocument to bytes (a Uint8Array)
+    const pdfBytes = await pdfDoc.save()
+
+    // Trigger the browser to download the PDF document
+    Download(pdfBytes, "application/pdf");
+  }
 
   const drawer = (
     <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
@@ -123,12 +165,11 @@ export default function DrawerAppBar(props: Props) {
       <Box component="main" sx={{ p: 3 }}>
         <Toolbar/>
      
-      <label htmlFor="contained-button-file" style={{alignItems:'center', justifyContent:'center', display:'flex',height:'100vh', width:'100vw  '}}>
-        <Input accept="image/*" id="contained-button-file" multiple type="file" style={{display:'none' }}/>
-        <Button variant="outlined" component="span" startIcon={<Upload />}>
+     
+        <Button variant="outlined" component="span" startIcon={<Upload />} onClick={modifyPdf}>
         Upload
       </Button>
-      </label>
+    
      
     
         
