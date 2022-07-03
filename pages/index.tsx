@@ -42,10 +42,31 @@ export default function DrawerAppBar(props: Props) {
     setMobileOpen(!mobileOpen);
   };
 
-  async function modifyPdf() {
+  const onFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if(event.target.files && event.target.files.length > 0) {
+    const file = event.target.files[0];
+    if (file) {
+      console.log('file', file);
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        const arrayBuffer = e.target.result;
+        if (arrayBuffer) {
+          modifyPdf(arrayBuffer);
+        }
+      }
+
+      reader.readAsArrayBuffer(file);
+
+      
+      
+    }
+  }
+  }
+
+
+  async function modifyPdf(existingPdfBytes: ArrayBuffer) {
     // Fetch an existing PDF document
-    const url = 'https://pdf-lib.js.org/assets/with_update_sections.pdf'
-    const existingPdfBytes = await fetch(url).then(res => res.arrayBuffer())
+  
 
     // Load a PDFDocument from the existing PDF bytes
     const pdfDoc = await PDFDocument.load(existingPdfBytes)
@@ -165,10 +186,10 @@ export default function DrawerAppBar(props: Props) {
       <Box component="main" sx={{ p: 3 }}>
         <Toolbar/>
      
-     
-        <Button variant="outlined" component="span" startIcon={<Upload />} onClick={modifyPdf}>
+        <input type="file" onChange={onFileChange} />
+        {/* <Button variant="outlined" component="span" startIcon={<Upload />} onClick={modifyPdf}>
         Upload
-      </Button>
+      </Button> */}
     
      
     
