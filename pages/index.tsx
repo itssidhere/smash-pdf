@@ -37,6 +37,7 @@ function Download(arrayBuffer: BlobPart, type: string) {
 export default function DrawerAppBar(props: Props) {
   const { window } = props;
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [docUrl , setDocUrl] = React.useState<string>('');
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -91,8 +92,10 @@ export default function DrawerAppBar(props: Props) {
     // Serialize the PDFDocument to bytes (a Uint8Array)
     const pdfBytes = await pdfDoc.save()
 
-    // Trigger the browser to download the PDF document
-    Download(pdfBytes, "application/pdf");
+    const blob   = new Blob( [ pdfBytes ], { type: "application/pdf" } );
+    const docUrl = URL.createObjectURL( blob );
+    setDocUrl(docUrl);
+    // Download(pdfBytes, "application/pdf");
   }
 
   const drawer = (
@@ -180,14 +183,34 @@ export default function DrawerAppBar(props: Props) {
           {drawer}
         </Drawer>
       </Box>
-      <Box component="main" sx={{ p: 3 }}>
+      <Box component="main" sx={{ p: 3 }} style={{height:'100vh' , width:'100vw'}}>
         <Toolbar/>
      
-        <input type="file" onChange={onFileChange} />
-        {/* <Button variant="outlined" component="span" startIcon={<Upload />} onClick={modifyPdf}>
-        Upload
-      </Button> */}
+        {
+          !docUrl && (
+            <Button
+  variant="contained"
+  component="label"
+>
+  Upload File
+  <input
+    type="file"
+    hidden
+    onChange={onFileChange}
+  />
+</Button>
+          )
+        }
     
+
+ {
+  docUrl && (
+ 
+      <iframe src={docUrl} allow="application/pdf" width={"100%"} height={"100%"}/>
+
+  )
+ }
+
      
     
         
