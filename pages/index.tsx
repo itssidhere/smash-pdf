@@ -14,7 +14,7 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import AdbIcon from '@mui/icons-material/Adb';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { PhotoCamera, Upload, UploadFile } from '@mui/icons-material';
+import { PhotoCamera, Upload, UploadFile, CloudUpload } from '@mui/icons-material';
 import { Input, Stack } from '@mui/material';
 import { degrees, PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 interface Props {
@@ -184,7 +184,7 @@ export default function DrawerAppBar(props: Props) {
           {drawer}
         </Drawer>
       </Box>
-      <Box component="main" sx={{ p: 3 }} style={{height:'100vh' , width:'100vw'}}>
+      <Box component="main" sx={{ p: 3 }} style={{height:'100vh' , width:'100vw' , display:'flex', justifyContent:'center', alignItems:'center'}}>
         <Toolbar/>
      
         {
@@ -192,6 +192,7 @@ export default function DrawerAppBar(props: Props) {
             <Button
   variant="contained"
   component="label"
+  startIcon={<CloudUpload />}
 >
   Upload a File
   <input
