@@ -94,6 +94,7 @@ export default function DrawerAppBar(props: Props) {
 
     const blob   = new Blob( [ pdfBytes ], { type: "application/pdf" } );
     const docUrl = URL.createObjectURL( blob );
+    console.log('docUrl', docUrl);  
     setDocUrl(docUrl);
     // Download(pdfBytes, "application/pdf");
   }
@@ -192,7 +193,7 @@ export default function DrawerAppBar(props: Props) {
   variant="contained"
   component="label"
 >
-  Upload File
+  Upload a File
   <input
     type="file"
     hidden
@@ -206,7 +207,7 @@ export default function DrawerAppBar(props: Props) {
  {
   docUrl && (
  
-      <iframe src={docUrl} allow="application/pdf" width={"100%"} height={"100%"}/>
+      <iframe src={docUrl} width={"100%"} height={"100%"}/>
 
   )
  }
